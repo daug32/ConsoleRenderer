@@ -1,6 +1,6 @@
 Console renderer.
 
-1) Main.cpp file - there is an example of using interface;
+1) Main.cpp file - there is an example of using the interface;
 1.2) stdafx.h - there are all used headers for main.cpp file;
 
 2) Vector.h - 3Float structure with operators for it;
