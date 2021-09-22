@@ -6,4 +6,4 @@ Console renderer.
 2) Vector.h - 3Float structure with operators for it; (Can be changed in future to this three classes: Vector2, Vector3 and Vector4)
 3) ConsoleRenderer.h / ConsoleRenderer.cpp - there is a class for drawing in windows terminal with all base functions for it (set a point, draw line, clear screen and etc);
 4) Shape.h / Shape.cpp - the base polygon with all its logic was determinated here;
-5) Shape3D.h / Shape3D.h - this class inherits from Shape;
+5) Shape3D.h / Shape3D.h - this class inherits from Shape and provide to work woth 3D objects.
