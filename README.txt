@@ -1,4 +1,5 @@
-Console renderer.
+Console renderer. 
+(Actually, not only Console. With a couple of edits it can be changed to other platform.)
 
 1) Main.cpp file - there is an example of using the interface;
 1.2) stdafx.h - there are all used headers for main.cpp file;
