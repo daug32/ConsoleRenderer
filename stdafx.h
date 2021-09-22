@@ -12,5 +12,5 @@ using std::abs;
 #include "ConsoleRenderer.h"
 #include "Vector.h"
 #include "Shape.h"
-
-#include <windows.h> //For Sleep function
+#include "Shape3D.h"
+#include <windows.h>

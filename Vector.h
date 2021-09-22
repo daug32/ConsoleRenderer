@@ -21,10 +21,17 @@ public:
 	Vector(float x, float y) {
 		this->x = x;
 		this->y = y;
-		z = 0;
+		this->z = 0;
+	}
+	Vector(float value) {
+		this->x = value;
+		this->y = value; 
+		this->z = value;
 	}
 	Vector() {
-		x = y = z = 0;
+		x = 0;
+		y = 0;
+		z = 0;
 	}
 
 	//-------------------------------------------
@@ -63,6 +70,20 @@ public:
 			this->x - a.x,
 			this->y - a.y,
 			this->z - a.z
+		};
+	}
+	Vector operator*(float a) {
+		return {
+			this->x * a,
+			this->y * a,
+			this->z * a
+		};
+	}
+	Vector operator/(float a) {
+		return {
+			this->x / a,
+			this->y / a,
+			this->z / a
 		};
 	}
 

@@ -1,44 +1,42 @@
 #pragma once
 #include "ConsoleRenderer.h"
-#include <vector>
 #include "Vector.h"
 #include <cmath>
 
 namespace Renderer {
-	const float PI = 3.14159265f;
-
-	//Convert degrees to radians
-	inline double radians(float degree) {
-		return degree * PI / (float)180;
-	}
-	//Convert radians to degrees
-	inline double degrees(float radian) {
-		return radian * (float)180 / PI;
-	}
 
 	class Shape
 	{
-	public:
+	protected:
 
+		Vector* drawableVertices;				//Vertices with changed position.
+		bool haveToCalc;						//When true, drawableVertices are recoordinates.
+	public:
 		//-------------------------------------------
 		// Variables
 		//-------------------------------------------
 		Vector center;							//Corrdinates for origin in local metric.
-		std::vector<Vector> baseVertices;		//Base vertices in local coordinates. They aren't changing.
-		Vector rotation;						//
+		Vector* baseVertices;					//Base vertices in local coordinates. They aren't changing.
+		int vertexCount;						//Quentity of vertices
+		Vector rotation;						//Vector that contains rotation (in radians) for each axis
 		Vector scale;							//Using for increasing the size in each direction.
-
-		std::vector<Vector> drawableVertices;	//Vertices with changed position.
-		bool haveToCalc;						//When true, drawableVertices are recoordinates.
+		Vector translation;						//To rotate around...
 
 		//-------------------------------------------
 		// Methods
 		//-------------------------------------------
-		Shape();
-		void Draw(ConsoleRenderer* renderer);
+		Shape(int vertexCount);
+		~Shape();
+
+		virtual	void Draw(ConsoleRenderer* renderer);
+
 		//Set the center position on the choosed coords
-		void Move(Vector newPos);
+		void MoveTo(Vector newPos);
+		//Change center position by adding
+		void Move(Vector deltaPos);
+
 		void SetScale(Vector scale);
+
 		//Rotation in radians
 		void Rotate(Vector deltaRotation);
 		//Rotation in radians
@@ -49,6 +47,9 @@ namespace Renderer {
 		void RotateZ(float deltaAngles);
 		//Rotation in radians
 		void SetRotation(Vector rotation);
+		//Change rotation by adding
+		void RotateAround(Vector rotation, Vector position);
+
 		//Rotation in degrees
 		void RotateDegree(Vector deltaRotation);
 		//Rotation in degrees
@@ -69,10 +70,11 @@ namespace Renderer {
 	public:
 		//Vertices in local coordinates
 		Triangle(Vector center, Vector vertices[3]);
-	};
+	}; 
+	
 
 	class RegularPolygon : public Shape {
 	public: 
-		RegularPolygon(Vector center, int verticesCount, int size);
+		RegularPolygon(Vector center, int verticesCount, int radius);
 	};
 }

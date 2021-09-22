@@ -5,61 +5,89 @@ namespace R = Renderer;
 //Functions
 //-------------------------------------------
 int main();
-void Draw();
+int Setup();
+int Draw();
 
 //-------------------------------------------
 // Global variables
 //-------------------------------------------
 static R::ConsoleRenderer* render;
-static int height = 46;
-static int width = 58;
-static int depth = 100;
-static Vector center = Vector(width / 2, height / 2, width / 2);
+static int height = 60;
+static int width = 100;
+static int depth = width;
 
-R::RegularPolygon* circles;
-int circlesCount = 2;
-R::RegularPolygon* triangle;
+static Vector center = Vector(width / 2, height / 2, depth / 2);
+static int timer = 0;
 
-static Vector rotation = Vector(5, 5, 0);
-static Vector direction = Vector(0, 0, 0);
+#define oneDegree (Renderer::PI / 180)
+static Vector changer;	//there can be rotation, translation and etc
+static POINT actualMousePos;
+static POINT lastMousePos;
 
+static R::RegularPolygon *obj;
 
 //-------------------------------------------
 // Entering point
 //-------------------------------------------
 int main() {
-	render = new R::ConsoleRenderer(width, height, depth);
-
-	int size = 23;
-	circles = new R::RegularPolygon[] {
-		R::RegularPolygon(center, 16, size),
-		R::RegularPolygon(center, 16, size)
-	};
-	circles[1].RotateY(R::PI / 2);
-	circles[1].RotateX(R::PI / 2);
-	triangle = new R::RegularPolygon(center, 3, 13);
-
+	Setup();
 	Draw();
-
-	delete[] circles;
-	delete triangle;
-	delete render;
 	return 1;
 }
 
-void Draw() {
+//-------------------------------------------
+// Prepare for rendering
+//-------------------------------------------
+int Setup() {
+	//Init renderer
+	bool result;
+	render = new R::ConsoleRenderer(&result, width, height, true);
+	if (!result) {
+		cout << endl << "render wasn't created.";
+		return 0;
+	}
+
+	//============ Init all drawable objects ===============
+	//
+	obj = new R::RegularPolygon(Vector(10, 10, depth / 2), 4, 10);
+	//
+	//=======================================================
+
+	changer = oneDegree * 10;
+	changer.z = 0;
+	//Get cursor position
+	GetCursorPos(&actualMousePos);
+	lastMousePos = actualMousePos;
+
+	return 1;
+}
+
+//-------------------------------------------
+// In general... This is rednering
+//-------------------------------------------
+int Draw() {
 	while (true) {
 		render->Clear();
+		
+		GetCursorPos(&actualMousePos);
+		changer.x = -(actualMousePos.y - lastMousePos.y) * 0.01f; 
+		changer.y = (actualMousePos.x - lastMousePos.x) * 0.01f;
+		lastMousePos.x = actualMousePos.x;
+		lastMousePos.y = actualMousePos.y;
 
-		circles[0].RotateDegree(rotation);
-		triangle->RotateZ(-R::PI / 36);
-		circles[1].RotateDegree(rotation);
+		obj->Rotate(changer);
+		obj->Draw(render);
 
-		circles[1].Draw(render);
-		triangle->Draw(render);
-		circles[0].Draw(render);
+		render->PutSymbol(obj->center.x, obj->center.y, '1', 1);
+		render->PutLine(Vector(width - 1, 0, 10), Vector(width - 1, height - 1, 10));
+		render->PutLine(Vector(0, height - 1, 10), Vector(width - 1, height - 1, 10));
 
-		render->Draw();
-		Sleep(40);
+		cout << endl;
+		cout << "x: " << obj->center.x << "; y: " << obj->center.y << "; z: " << obj->center.z;
+
+
+		Sleep(70);
+		timer++;
 	}
+	return 1;
 }

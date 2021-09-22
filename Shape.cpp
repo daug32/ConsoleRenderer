@@ -4,23 +4,29 @@ namespace Renderer {
 	//-------------------------------------------
 	// Constructors
 	//-------------------------------------------
-	Shape::Shape() {
-		this->baseVertices = std::vector<Vector>();
-		this->drawableVertices = std::vector<Vector>();
-		this->center = Vector();
-		this->rotation = Vector();
-		this->scale = Vector(1, 1, 1);
-		this->haveToCalc = true;
-	}
-	Triangle::Triangle(Vector center, Vector vertices[3])
-	{
-		for (int i = 0; i < 3; i++) {
-			this->baseVertices.push_back(vertices[i]);
-			this->drawableVertices.push_back(vertices[i]);
+	Shape::Shape(int vertexCount) {
+		this->vertexCount = vertexCount;
+		baseVertices = new Vector[vertexCount]();
+		drawableVertices = new Vector[vertexCount]();
+		for (int i = 0; i < vertexCount; i++) {
+			baseVertices[i] = Vector();
+			drawableVertices[i] = Vector();
 		}
-		this->center = center;
+
+		center = Vector();
+		rotation = Vector();
+		scale = Vector(1, 1, 1);
+		haveToCalc = true;
 	}
-	Rectangle::Rectangle(Vector center, int width, int height, int depth) {
+	Shape::~Shape() {
+		delete[] baseVertices;
+		delete[] drawableVertices;
+	}
+
+	//-------------------------------------------
+	// Constructors of derived classes
+	//-------------------------------------------
+	Rectangle::Rectangle(Vector center, int width, int height, int depth) : Shape(4) {
 		Vector vertices[4] = {
 			Vector(width / 2, height / 2, depth),
 			Vector(width / 2, -height / 2, depth),
@@ -28,35 +34,48 @@ namespace Renderer {
 			Vector(-width / 2, height / 2, depth)
 		}; 
 		for (int i = 0; i < 4; i++) {
-			this->baseVertices.push_back(vertices[i]);
-			this->drawableVertices.push_back(vertices[i]);
+			this->baseVertices[i] = vertices[i];
+			this->drawableVertices[i] = vertices[i];
 		}
 		this->center = center;
 	}
-	Rectangle::Rectangle(Vector center, Vector vertices[4]) {
+	Rectangle::Rectangle(Vector center, Vector vertices[4]) : Shape(4) {
 		for (int i = 0; i < 4; i++) {
-			baseVertices.push_back(vertices[i]);
-			drawableVertices.push_back(vertices[i]);
+			baseVertices[i] = vertices[i];
+			drawableVertices[i] = vertices[i];
 		}
 		this->center = center;
 	}
-	RegularPolygon::RegularPolygon(Vector center, int verticesCount, int radius) {
+	RegularPolygon::RegularPolygon(Vector center, int verticesCount, int radius) : Shape(verticesCount) {
 		Vector v;
 		float angle = radians(360 / verticesCount);
 		for (int i = 0; i < verticesCount; i++) {
 			v.x = radius * cos(angle * i);
 			v.y = radius * sin(angle * i);
-			baseVertices.push_back(v);
-			drawableVertices.push_back(v);
+			baseVertices[i] = v;
+			drawableVertices[i] = v;
 		}
 		this->center = center;
 	}
 
+	Triangle::Triangle(Vector center, Vector vertices[3]) : Shape(3) {
+		for (int i = 0; i < 3; i++) {
+			this->baseVertices[i] = vertices[i];
+			this->drawableVertices[i] = vertices[i];
+		}
+		this->center = center;
+	}
+
+
 	//-------------------------------------------
 	// Position
 	//-------------------------------------------
-	void Shape::Move(Vector newPos) {
+	void Shape::MoveTo(Vector newPos) {
 		this->center = newPos;
+		this->haveToCalc = true;
+	}
+	void Shape::Move(Vector deltaPos) {
+		this->center += deltaPos;
 		this->haveToCalc = true;
 	}
 	//-------------------------------------------
@@ -102,15 +121,25 @@ namespace Renderer {
 		this->rotation.z = radians(rotation.z);
 		this->haveToCalc = true;
 	}
+	void Shape::RotateAround(Vector rotation, Vector position) {
+		this->rotation += rotation;
+		for (int i = 0; i < vertexCount; i++)
+			baseVertices[i] = baseVertices[i] + center - position;
+		Calculate();
+		for (int i = 0; i < vertexCount; i++)
+			baseVertices[i] = baseVertices[i] - center + position;
+	}
 
 	//-------------------------------------------
 	// Other
 	//-------------------------------------------
 	void Shape::Draw(ConsoleRenderer* renderer) {
 		if (haveToCalc) Calculate();
-		for (int i = 0; i < drawableVertices.size() - 1; i++)
+
+		for (int i = 0; i < vertexCount - 1; i++) {
 			renderer->PutLine(drawableVertices[i], drawableVertices[i + 1]);
-		renderer->PutLine(drawableVertices[0], drawableVertices[drawableVertices.size() - 1]);
+		}
+		renderer->PutLine(drawableVertices[0], drawableVertices[vertexCount - 1]);
 	}
 	void Shape::Calculate() {
 		Vector a;
@@ -118,7 +147,7 @@ namespace Renderer {
 		float cos = 0;
 		float sin = 0;
 
-		for (int i = 0; i < baseVertices.size(); i++) {
+		for (int i = 0; i < vertexCount; i++) {
 			a = baseVertices[i];
 
 			//-------------------------------------------
@@ -151,7 +180,9 @@ namespace Renderer {
 			a.z = b.z;
 
 			//-------------------------------------------
-			// Transforming
+			// Translation
+			a += translation;
+			translation = Vector();
 			a += center;
 
 			//-------------------------------------------
