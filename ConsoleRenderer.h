@@ -7,6 +7,7 @@ using std::endl;
 #include <cmath>
 using std::sqrt;
 using std::abs;
+#include <string>
 
 namespace Renderer {
 	//All possible colors. Will be used if depthMode activated;
@@ -44,22 +45,23 @@ namespace Renderer {
 		bool depthMode;			//Will render set colors or not. If true, generate second buffer;
 		int width;				//X size of screen
 		int height;				//Y size of screen
-		float FOV;
-		int maxZ;				//The farest visible position
-		int minZ;				//The nearest visible position
+		float FOV;				//The filed of view. In degrees.
+		int Zfar;				//The farest visible position
+		int Znear;				//The nearest visible position
+		bool isOrtographic;		//True in default. If false, use perspective projection. 
 
 	//-------------------------------------------
 	// Constructors & destructors
 	//-------------------------------------------
 
-		/*if result = false, something renderer wasn't created right, 
+		/*
+		(result == false) means that render wasn't created right
 		width is the width of the screen
-		height is the height of the
-		maxZ is the farest visible position
-		minZ is the neares visible position
-		FOV is "field of view", in degree
+		height is the height of the screen
+		Znear is the nearest point you can see
+		FOV is a "field of view", in radians
 		*/
-		ConsoleRenderer(bool* result, int width, int height, bool depthMode = true, int maxZ = 100, int minZ = 0, float FOV = 90);
+		ConsoleRenderer(bool* result, int width, int height, bool depthMode = true, float Zfar = 500, float Znear = 1);
 		~ConsoleRenderer();
 
 	//-------------------------------------------
@@ -75,18 +77,28 @@ namespace Renderer {
 
 		//While true, brightness of point depend on its position.z.
 		void DepthMode(bool activity);
+		/*FOV = filed of view, in degrees
+		Znear will be recalculated*/
+		void SetFieldOfView(float FOV);
+		/*Znear is the nearest point you can see,
+		FOV will be recalculated (in degrees)*/
+		void SetZnear(float Znear);
 
 		//Set the data to all buffers and draw it on screen.
-		inline void PutPoint(Vector p) { PutPoint(p.x, p.y, p.z); };
+		void PutPoint(Vector p);
 		//Set the data to all buffers and draw it on screen.
-		void PutPoint(int x, int y, int z = 1);
+		inline void PutPoint(int x, int y, int z = 1) {
+			PutPoint(Vector(x, y, z)); 
+		}
 		//Draw line using the PutPoint functions.
-		inline void PutLine(Vector p1, Vector p2) { PutLine(p1.x, p1.y, p1.z, p2.x, p2.y, p2.z); };
+		void PutLine(Vector p1, Vector p2);
 		//Draw line using the PutPoint functions.
-		void PutLine(int x0, int y0, int z0, int x1, int y1, int z1);
-		//Put symbol on screen. Activity in fuct is Z-coordinate. 
-		void PutSymbol(int x, int y, char symbol, char activity);
+		void PutLine(int x0, int y0, int z0, int x1, int y1, int z1) { 
+			PutLine(Vector(x0, y0, z0), Vector(x1, y1, z1)); 
+		}
+		//Put string on the screen
+		void PutStr(int x, int y, std::string str);
 
-		inline Vector CalculatePerspective(Vector point);
+		inline Vector PerspectiveProjection3Dto2D(Vector Point3D);
 	};
 }

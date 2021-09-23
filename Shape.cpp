@@ -16,6 +16,7 @@ namespace Renderer {
 		center = Vector();
 		rotation = Vector();
 		scale = Vector(1, 1, 1);
+		translation = Vector();
 		haveToCalc = true;
 	}
 	Shape::~Shape() {
@@ -159,30 +160,20 @@ namespace Renderer {
 			//-------------------------------------------
 			// Rotating
 			b = a;
-			cos = std::cos(rotation.x);
-			sin = std::sin(rotation.x);
-			a.x = b.x;
-			a.y = b.y * cos + b.z * (-sin);
-			a.z = b.y * sin + b.z * cos;
+			a.y = b.y * std::cos(rotation.x) - b.z * std::sin(rotation.x);
+			a.z = b.y * std::sin(rotation.x) + b.z * std::cos(rotation.x);
 
 			b = a;
-			cos = std::cos(rotation.y);
-			sin = std::sin(rotation.y);
-			a.x = b.x * cos + b.z * sin;
-			a.y = b.y;
-			a.z = b.x * (-sin) + b.z * cos;
+			a.x = b.x * std::cos(rotation.y) + b.z * std::sin(rotation.y);
+			a.z = - b.x * std::sin(rotation.y) + b.z * std::cos(rotation.y);
 
 			b = a;
-			cos = std::cos(rotation.z);
-			sin = std::sin(rotation.z);
-			a.x = b.x * cos + b.y * (-sin);
-			a.y = b.x * sin + b.y * cos;
-			a.z = b.z;
+			a.x = b.x * std::cos(rotation.z) - b.y * std::sin(rotation.z);
+			a.y = b.x * std::sin(rotation.z) + b.y * std::cos(rotation.z);
 
 			//-------------------------------------------
 			// Translation
 			a += translation;
-			translation = Vector();
 			a += center;
 
 			//-------------------------------------------

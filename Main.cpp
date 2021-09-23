@@ -14,17 +14,16 @@ int Draw();
 static R::ConsoleRenderer* render;
 static int height = 60;
 static int width = 100;
-static int depth = width;
 
-static Vector center = Vector(width / 2, height / 2, depth / 2);
+static Vector center;
 static int timer = 0;
 
 #define oneDegree (Renderer::PI / 180)
 static Vector changer;	//there can be rotation, translation and etc
-static POINT actualMousePos;
+static POINT mousePos;
 static POINT lastMousePos;
 
-static R::RegularPolygon *obj;
+static R::Shape3D *obj;
 
 //-------------------------------------------
 // Entering point
@@ -41,52 +40,53 @@ int main() {
 int Setup() {
 	//Init renderer
 	bool result;
-	render = new R::ConsoleRenderer(&result, width, height, true);
+	render = new R::ConsoleRenderer(&result, width, height, true, 500);
 	if (!result) {
 		cout << endl << "render wasn't created.";
 		return 0;
 	}
+	render->isOrtographic = false;
+	render->SetZnear(70);
+	center = Vector(width / 2, height / 2, render->Znear + 100);
 
 	//============ Init all drawable objects ===============
 	//
-	obj = new R::RegularPolygon(Vector(10, 10, depth / 2), 4, 10);
+	obj = new R::Cube(center, 60);
 	//
 	//=======================================================
 
-	changer = oneDegree * 10;
-	changer.z = 0;
+	changer = center;
+	changer.x = 90;
 	//Get cursor position
-	GetCursorPos(&actualMousePos);
-	lastMousePos = actualMousePos;
+	GetCursorPos(&mousePos);
 
 	return 1;
 }
 
 //-------------------------------------------
-// In general... This is rednering
+// This is rednering. It is unexpected for function with this kind of name, right? :D
 //-------------------------------------------
 int Draw() {
 	while (true) {
 		render->Clear();
 		
-		GetCursorPos(&actualMousePos);
-		changer.x = -(actualMousePos.y - lastMousePos.y) * 0.01f; 
-		changer.y = (actualMousePos.x - lastMousePos.x) * 0.01f;
-		lastMousePos.x = actualMousePos.x;
-		lastMousePos.y = actualMousePos.y;
+		GetCursorPos(&mousePos);
+		changer.x = (float)mousePos.x / 1920 * width;
+		lastMousePos = mousePos;
 
-		obj->Rotate(changer);
+		obj->MoveTo(Vector(changer.x, obj->center.y, obj->center.z));
+		obj->RotateX(oneDegree * 4);
+		obj->RotateY(oneDegree * 4);
 		obj->Draw(render);
 
-		render->PutSymbol(obj->center.x, obj->center.y, '1', 1);
-		render->PutLine(Vector(width - 1, 0, 10), Vector(width - 1, height - 1, 10));
-		render->PutLine(Vector(0, height - 1, 10), Vector(width - 1, height - 1, 10));
+		string str =  "center.x: " + to_string(obj->center.x) +
+					"\ncenter.y: " + to_string(obj->center.y) +
+					"\ncenter.z: " + to_string(obj->center.z) + 
+					"\nZnear: " + to_string(render->Znear) + 
+					"\nFOV: " + to_string(render->Znear);
+		render->PutStr(0, height - 1, str.c_str());
 
-		cout << endl;
-		cout << "x: " << obj->center.x << "; y: " << obj->center.y << "; z: " << obj->center.z;
-
-
-		Sleep(70);
+		Sleep(19);
 		timer++;
 	}
 	return 1;

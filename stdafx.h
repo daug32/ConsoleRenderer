@@ -9,6 +9,10 @@ using std::sin;
 using std::cos;
 using std::abs;
 
+#include <string>
+using std::string;
+using std::to_string;
+
 #include "ConsoleRenderer.h"
 #include "Vector.h"
 #include "Shape.h"
