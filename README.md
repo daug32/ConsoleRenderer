@@ -6,16 +6,19 @@ ___
 ![something](model.gif)
 
 ____
-## Minor files, where some count of examples is. 
+## What all those files are.
+<b>Minor files - there is some count of examples. </b>
 <ul>
   <li>Main.cpp file - there is an example of using the interface;</li>
   <li>stdafx.h - there are all used headers for main.cpp file;</li>
 </ul>
-
-## Main files. 
+<b>Main files: headers and classes.</b>
 <ul>
   <li>Vector.h - 3Float structure with operators for it;</li>
   <li>ConsoleRenderer.h / ConsoleRenderer.cpp - there is a class for drawing in windows terminal with all base functions for it (set a point, draw line, clear screen and etc);</li>
   <li>Shape.h / Shape.cpp - the base polygon with all its logic was determinated here;</li>
   <li>Shape3D.h / Shape3D.h - this class inherits from Shape and provide to work woth 3D objects.</li>
 </ul>
+## How to use.
+Interface to draw simple objects like lines and dots is in the ConsoleRenderer.h,
+Interfaces of complicated objects like rectangle and regular polygons are in the Shape.h file. Every single object inherit methods of the main class - Shape class. 
