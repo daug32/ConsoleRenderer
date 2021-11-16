@@ -20,5 +20,5 @@ ____
   <li>Shape3D.h / Shape3D.h - this class inherits from Shape and provide to work woth 3D objects.</li>
 </ul>
 ## How to use.
-Interface to draw simple objects like lines and dots is in the ConsoleRenderer.h,
-Interfaces of complicated objects like rectangle and regular polygons are in the Shape.h file. Every single object inherit methods of the main class - Shape class. 
+Interface of drawing simple objects like lines and dots is in the ConsoleRenderer.h,
+Interfaces of using complicated objects like rectangle and regular polygons are in the Shape.h file. Every single object inherit methods of the main class - Shape class. 
