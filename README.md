@@ -1,12 +1,12 @@
-# Console renderer. 
+<h1>Console renderer</h1>
 
-It is very flexible platform, becouse it is more drawing lib then interface for console renderer.
+The libruary of drawing in the console.
 ___
 
 ![something](model.gif)
 
 ____
-## What all those files are.
+<h2>What all those files are</h2>
 <b>Minor files - there is some count of examples. </b>
 <ul>
   <li>Main.cpp file - there is an example of using the interface;</li>
@@ -19,6 +19,6 @@ ____
   <li>Shape.h / Shape.cpp - the base polygon with all its logic was determinated here;</li>
   <li>Shape3D.h / Shape3D.h - this class inherits from Shape and provide to work woth 3D objects.</li>
 </ul>
-## How to use.
+<h2>How to use</h2>
 Interface of drawing simple objects like lines and dots is in the ConsoleRenderer.h,
 Interfaces of using complicated objects like rectangle and regular polygons are in the Shape.h file. Every single object inherit methods of the main class - Shape class. 
