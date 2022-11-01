@@ -38,26 +38,23 @@ int main() {
 // Prepare for rendering
 //-------------------------------------------
 int Setup() {
-	//Init renderer
-	bool result;
-	render = new R::ConsoleRenderer(&result, width, height, true, 500);
-	if (!result) {
+	try {
+		render = new R::ConsoleRenderer(width, height, true, 500);
+	}
+	catch (std::exception ex) {
 		cout << endl << "render wasn't created.";
 		return 0;
 	}
+
 	render->isOrtographic = false;
 	render->SetZnear(70);
 	center = Vector(width / 2, height / 2, render->Znear + 100);
 
-	//============ Init all drawable objects ===============
-	//
 	obj = new R::Cube(center, 60);
-	//
-	//=======================================================
 
 	changer = center;
 	changer.x = 90;
-	//Get cursor position
+
 	GetCursorPos(&mousePos);
 
 	return 1;

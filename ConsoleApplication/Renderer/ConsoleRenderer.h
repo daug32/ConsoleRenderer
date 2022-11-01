@@ -1,5 +1,6 @@
 #pragma once
 #include <windows.h>
+#include <exception>
 #include "Vector.h"
 #include <iostream>
 using std::cout;
@@ -61,7 +62,7 @@ namespace Renderer {
 		Znear is the nearest point you can see
 		FOV is a "field of view", in radians
 		*/
-		ConsoleRenderer(bool* result, int width, int height, bool depthMode = true, float Zfar = 500, float Znear = 1);
+		ConsoleRenderer(int width, int height, bool depthMode = true, float Zfar = 500, float Znear = 1);
 		~ConsoleRenderer();
 
 	//-------------------------------------------
@@ -73,9 +74,6 @@ namespace Renderer {
 
 		//Reset all buffers.
 		void Clear();
-
-		//Print on screen buffers. Used for debugging.
-		void PrintBuffers();
 
 		//While true, brightness of point depend on its position.z.
 		void DepthMode(bool activity);

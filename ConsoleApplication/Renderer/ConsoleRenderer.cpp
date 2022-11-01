@@ -6,14 +6,12 @@ namespace Renderer
 	// Constructors
 	//-------------------------------------------
 	ConsoleRenderer::ConsoleRenderer(
-		bool* result,
 		int width,
 		int height,
 		bool depthMode,
 		float Zfar,
 		float Znear
 	) : depthMode(depthMode) {
-		*result = true;
 		int size = width * height;
 
 		this->height = height;
@@ -46,7 +44,7 @@ namespace Renderer
 
 		handle = GetStdHandle(STD_OUTPUT_HANDLE);
 		if (!GetConsoleScreenBufferInfo(handle, &csbi)) {
-			*result = false;
+			throw std::exception();
 		}
 	}
 
@@ -63,6 +61,7 @@ namespace Renderer
 			for (int x = 0; x < width; x++) {
 				cout << colorBuffer[y * width + x];
 			}
+
 			cout << endl;
 		}
 	}
@@ -93,24 +92,6 @@ namespace Renderer
 		);
 
 		SetConsoleCursorPosition(handle, coordScreen);
-	}
-
-	void ConsoleRenderer::PrintBuffers() {
-		cout << "colorBuffer:\n";
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				cout << (int)colorBuffer[y * width + x];
-			}
-			cout << endl;
-		}
-
-		cout << "\n\ndepthBUffer:\n";
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-				cout << (int)depthBuffer[y * width + x];
-			}
-			cout << endl;
-		}
 	}
 
 	void ConsoleRenderer::DepthMode(bool activity) {
@@ -220,9 +201,7 @@ namespace Renderer
 
 		SetConsoleCursorPosition(handle, { (short)x, (short)y });
 
-		for (int i = 0; i < str.size(); i++) {
-			cout << str[i];
-		}
+		cout << str;
 	}
 
 	inline Vector ConsoleRenderer::PerspectiveProjection3Dto2D(const Vector& point3D) {
