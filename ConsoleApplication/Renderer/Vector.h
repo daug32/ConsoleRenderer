@@ -39,13 +39,13 @@ public:
 	//-------------------------------------------
 	// Operators
 	//-------------------------------------------
-	void operator+=(Vector v) {
+	void operator+=(const Vector& v) {
 		this->x += v.x;
 		this->y += v.y;
 		this->z += v.z;
 	}
 
-	void operator-=(Vector v) {
+	void operator-=(const Vector& v) {
 		this->x -= v.x;
 		this->y -= v.y;
 		this->z -= v.z;
@@ -63,7 +63,7 @@ public:
 		this->z /= v;
 	}
 
-	Vector operator+(Vector a) {
+	Vector operator+(const Vector& a) {
 		return {
 			this->x + a.x,
 			this->y + a.y,
@@ -71,7 +71,7 @@ public:
 		};
 	}
 
-	Vector operator-(Vector a) {
+	Vector operator-(const Vector& a) {
 		return {
 			this->x - a.x,
 			this->y - a.y,
@@ -110,14 +110,14 @@ public:
 		return result;
 	}
 
-	static inline double GetSqLength(Vector v) {
+	static inline double GetSqLength(const Vector& v) {
 		return
 			v.x * v.x +
 			v.y * v.y +
 			v.z * v.z;
 	}
 
-	static inline double GetSqDistance(Vector pos1, Vector pos2) {
+	static inline double GetSqDistance(const Vector& pos1, const Vector& pos2) {
 		return
 			(pos1.x - pos2.x) * (pos1.x - pos2.x) +
 			(pos1.y - pos2.y) * (pos1.y - pos2.y) +

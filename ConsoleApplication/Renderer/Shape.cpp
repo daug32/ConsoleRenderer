@@ -29,7 +29,7 @@ namespace Renderer {
 	//-------------------------------------------
 	// Constructors of derived classes
 	//-------------------------------------------
-	Rectangle::Rectangle(Vector center, int width, int height, int depth) : Shape(4) {
+	Rectangle::Rectangle(const Vector& center, int width, int height, int depth) : Shape(4) {
 		Vector vertices[4] = {
 			Vector(width / 2, height / 2, depth),
 			Vector(width / 2, -height / 2, depth),
@@ -45,7 +45,7 @@ namespace Renderer {
 		this->center = center;
 	}
 
-	Rectangle::Rectangle(Vector center, Vector vertices[4]) : Shape(4) {
+	Rectangle::Rectangle(const Vector& center, const Vector vertices[4]) : Shape(4) {
 		for (int i = 0; i < 4; i++) {
 			baseVertices[i] = vertices[i];
 			drawableVertices[i] = vertices[i];
@@ -54,7 +54,7 @@ namespace Renderer {
 		this->center = center;
 	}
 
-	RegularPolygon::RegularPolygon(Vector center, int verticesCount, int radius) : Shape(verticesCount) {
+	RegularPolygon::RegularPolygon(const Vector& center, int verticesCount, int radius) : Shape(verticesCount) {
 		Vector v;
 		float angle = radians(360 / verticesCount);
 
@@ -68,7 +68,7 @@ namespace Renderer {
 		this->center = center;
 	}
 
-	Triangle::Triangle(Vector center, Vector vertices[3]) : Shape(3) {
+	Triangle::Triangle(const Vector& center, const Vector vertices[3]) : Shape(3) {
 		for (int i = 0; i < 3; i++) {
 			this->baseVertices[i] = vertices[i];
 			this->drawableVertices[i] = vertices[i];
@@ -80,12 +80,12 @@ namespace Renderer {
 	//-------------------------------------------
 	// Position
 	//-------------------------------------------
-	void Shape::MoveTo(Vector newPos) {
+	void Shape::MoveTo(const Vector& newPos) {
 		this->center = newPos;
 		this->haveToCalc = true;
 	}
 
-	void Shape::Move(Vector deltaPos) {
+	void Shape::Move(const Vector& deltaPos) {
 		this->center += deltaPos;
 		this->haveToCalc = true;
 	}
@@ -93,7 +93,7 @@ namespace Renderer {
 	//-------------------------------------------
 	// Scaling
 	//-------------------------------------------
-	void Shape::SetScale(Vector scale) {
+	void Shape::SetScale(const Vector& scale) {
 		this->scale = scale;
 		this->haveToCalc = true;
 	}
@@ -101,12 +101,12 @@ namespace Renderer {
 	//-------------------------------------------
 	// Rotation
 	//-------------------------------------------
-	void Shape::SetRotation(Vector rotation) {
+	void Shape::SetRotation(const Vector& rotation) {
 		this->rotation = rotation;
 		this->haveToCalc = true;
 	}
 
-	void Shape::Rotate(Vector deltaRotation) {
+	void Shape::Rotate(const Vector& deltaRotation) {
 		this->rotation += deltaRotation;
 		this->haveToCalc = true;
 	}
@@ -126,27 +126,32 @@ namespace Renderer {
 		this->haveToCalc = true;
 	}
 
-	void Shape::RotateDegree(Vector deltaRotation) {
+	void Shape::RotateDegree(const Vector& deltaRotation) {
 		this->rotation.x += radians(deltaRotation.x);
 		this->rotation.y += radians(deltaRotation.y);
 		this->rotation.z += radians(deltaRotation.z);
 		this->haveToCalc = true;
 	}
 
-	void Shape::SetRotationDegree(Vector rotation) {
+	void Shape::SetRotationDegree(const Vector& rotation) {
 		this->rotation.x = radians(rotation.x);
 		this->rotation.y = radians(rotation.y);
 		this->rotation.z = radians(rotation.z);
 		this->haveToCalc = true;
 	}
 
-	void Shape::RotateAround(Vector rotation, Vector position) {
+	void Shape::RotateAround(const Vector& rotation, const Vector& position) {
 		this->rotation += rotation;
-		for (int i = 0; i < vertexCount; i++)
+
+		for (int i = 0; i < vertexCount; i++) {
 			baseVertices[i] = baseVertices[i] + center - position;
+		}
+
 		Calculate();
-		for (int i = 0; i < vertexCount; i++)
+
+		for (int i = 0; i < vertexCount; i++) {
 			baseVertices[i] = baseVertices[i] - center + position;
+		}
 	}
 
 	//-------------------------------------------
@@ -164,8 +169,8 @@ namespace Renderer {
 	void Shape::Calculate() {
 		Vector a;
 		Vector b;
-		float cos = 0;
-		float sin = 0;
+		register float cos = 0;
+		register float sin = 0;
 
 		for (int i = 0; i < vertexCount; i++) {
 			a = baseVertices[i];
@@ -179,16 +184,22 @@ namespace Renderer {
 			//-------------------------------------------
 			// Rotating
 			b = a;
-			a.y = b.y * std::cos(rotation.x) - b.z * std::sin(rotation.x);
-			a.z = b.y * std::sin(rotation.x) + b.z * std::cos(rotation.x);
+			cos = std::cos(rotation.x);
+			sin = std::sin(rotation.x);
+			a.y = b.y * cos - b.z * sin;
+			a.z = b.y * sin + b.z * cos;
 
 			b = a;
-			a.x = b.x * std::cos(rotation.y) + b.z * std::sin(rotation.y);
-			a.z = -b.x * std::sin(rotation.y) + b.z * std::cos(rotation.y);
+			cos = std::cos(rotation.y);
+			sin = std::sin(rotation.y);
+			a.x = b.x * cos + b.z * sin;
+			a.z = -b.x * sin + b.z * cos;
 
 			b = a;
-			a.x = b.x * std::cos(rotation.z) - b.y * std::sin(rotation.z);
-			a.y = b.x * std::sin(rotation.z) + b.y * std::cos(rotation.z);
+			cos = std::cos(rotation.z);
+			sin = std::sin(rotation.z);
+			a.x = b.x * cos - b.y * sin;
+			a.y = b.x * sin + b.y * cos;
 
 			//-------------------------------------------
 			// Translation

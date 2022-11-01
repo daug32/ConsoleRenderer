@@ -8,19 +8,19 @@ namespace Renderer {
 	class Shape3D : public Shape
 	{
 	public:
-		bool** connections;		//Contain information about connection of all vertices. Size is Y*X 
-		//-------------------------------------------
-		// Methods
-		//-------------------------------------------
+		bool** connections;
+
 		Shape3D(int vertexCount);
+
 		~Shape3D();
+
 		void Draw(ConsoleRenderer* renderer);
 	};
 
 	class Cube : public Shape3D {
 	public:
 		int size;
-		Cube(Vector pos, int size) : Shape3D(8), size(size) {
+		Cube(const Vector& pos, int size) : Shape3D(8), size(size) {
 			center = pos;
 
 			//======================
@@ -54,7 +54,7 @@ namespace Renderer {
 		RegularPolygon** circles;
 		int elementCount;
 		Torus(
-			Vector center, 
+			const Vector& center,
 			int bigCapacity, 
 			int bigRadius, 
 			int litCapacity, 

@@ -31,14 +31,14 @@ namespace Renderer {
 		virtual	void Draw(ConsoleRenderer* renderer);
 
 		//Set the center position on the choosed coords
-		void MoveTo(Vector newPos);
+		void MoveTo(const Vector& newPos);
 		//Change center position by adding
-		void Move(Vector deltaPos);
+		void Move(const Vector& deltaPos);
 
-		void SetScale(Vector scale);
+		void SetScale(const Vector& scale);
 
 		//Rotation in radians
-		void Rotate(Vector deltaRotation);
+		void Rotate(const Vector& deltaRotation);
 		//Rotation in radians
 		void RotateX(float deltaAngles);
 		//Rotation in radians
@@ -46,14 +46,14 @@ namespace Renderer {
 		//Rotation in radians
 		void RotateZ(float deltaAngles);
 		//Rotation in radians
-		void SetRotation(Vector rotation);
+		void SetRotation(const Vector& rotation);
 		//Change rotation by adding
-		void RotateAround(Vector rotation, Vector position);
+		void RotateAround(const Vector& rotation, const Vector& position);
 
 		//Rotation in degrees
-		void RotateDegree(Vector deltaRotation);
+		void RotateDegree(const Vector& deltaRotation);
 		//Rotation in degrees
-		void SetRotationDegree(Vector rotation);
+		void SetRotationDegree(const Vector& rotation);
 
 	protected:
 		void Calculate();
@@ -62,19 +62,19 @@ namespace Renderer {
 	class Rectangle : public Shape {
 	public:
 		//Make rectangle around the center position
-		Rectangle(Vector center, int width, int height, int depth = 10);
-		Rectangle(Vector center, Vector vertices[4]);
+		Rectangle(const Vector& center, int width, int height, int depth = 10);
+		Rectangle(const Vector& center, const Vector vertices[4]);
 	};
 
 	class Triangle : public Shape {
 	public:
 		//Vertices in local coordinates
-		Triangle(Vector center, Vector vertices[3]);
+		Triangle(const Vector& center, const Vector vertices[3]);
 	}; 
 	
 
 	class RegularPolygon : public Shape {
 	public: 
-		RegularPolygon(Vector center, int verticesCount, int radius);
+		RegularPolygon(const Vector& center, int verticesCount, int radius);
 	};
 }

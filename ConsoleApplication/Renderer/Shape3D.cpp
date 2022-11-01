@@ -24,7 +24,9 @@ namespace Renderer {
 	// Other
 	//-------------------------------------------
 	void Shape3D::Draw(ConsoleRenderer* renderer) {
-		if (haveToCalc) Calculate();
+		if (haveToCalc) {
+			Calculate();
+		}
 
 		for (int y = 0; y < vertexCount; y++) 
 		{
