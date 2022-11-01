@@ -53,19 +53,26 @@ namespace Renderer {
 	public:
 		RegularPolygon** circles;
 		int elementCount;
-		Torus(Vector center, int bigCapacity, int bigRadius, int litCapacity, int litRadius) : 
-			RegularPolygon(center, bigCapacity, bigRadius)
-		{
+		Torus(
+			Vector center, 
+			int bigCapacity, 
+			int bigRadius, 
+			int litCapacity, 
+			int litRadius
+		) : RegularPolygon(center, bigCapacity, bigRadius) {
 			circles = new RegularPolygon * [bigCapacity];
 			elementCount = bigCapacity;
+
 			for (int i = 0; i < bigCapacity; i++) {
 				circles[i] = new RegularPolygon(baseVertices[i], litCapacity, litRadius);
 			}
 		}
+
 		~Torus() {
 			for (int i = 0; i < elementCount; i++) delete circles[i];
 			delete[] circles;
 		}
+
 		void Draw(ConsoleRenderer* renderer) {
 			if (haveToCalc) {
 				Calculate();
@@ -74,8 +81,10 @@ namespace Renderer {
 					circles[i][0].RotateAround(center, rotation);
 				}
 			}
-			for (int i = 0; i < elementCount; i++)
+
+			for (int i = 0; i < elementCount; i++) {
 				circles[i][0].Draw(renderer);
+			}
 		}
 	};
 }

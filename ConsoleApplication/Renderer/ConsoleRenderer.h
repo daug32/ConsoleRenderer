@@ -18,6 +18,7 @@ namespace Renderer {
 	inline double radians(float degree) {
 		return degree * PI / (float)180;
 	}
+
 	//Convert radians to degrees
 	inline double degrees(float radian) {
 		return radian * (float)180 / PI;
@@ -26,7 +27,6 @@ namespace Renderer {
 	class ConsoleRenderer
 	{
 	protected:
-
 	//-------------------------------------------
 	// Variables of class
 	//-------------------------------------------
@@ -53,7 +53,6 @@ namespace Renderer {
 	//-------------------------------------------
 	// Constructors & destructors
 	//-------------------------------------------
-
 		/*
 		(result == false) means that render wasn't created right
 		width is the width of the screen

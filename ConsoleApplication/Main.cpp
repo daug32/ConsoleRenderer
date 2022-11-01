@@ -89,5 +89,6 @@ int Draw() {
 		Sleep(19);
 		timer++;
 	}
+
 	return 1;
 }

@@ -8,9 +8,9 @@ namespace Renderer {
 	class Shape
 	{
 	protected:
-
 		Vector* drawableVertices;				//Vertices with changed position.
 		bool haveToCalc;						//When true, drawableVertices are recoordinates.
+
 	public:
 		//-------------------------------------------
 		// Variables

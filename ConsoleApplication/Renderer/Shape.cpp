@@ -8,6 +8,7 @@ namespace Renderer {
 		this->vertexCount = vertexCount;
 		baseVertices = new Vector[vertexCount]();
 		drawableVertices = new Vector[vertexCount]();
+
 		for (int i = 0; i < vertexCount; i++) {
 			baseVertices[i] = Vector();
 			drawableVertices[i] = Vector();
@@ -19,6 +20,7 @@ namespace Renderer {
 		translation = Vector();
 		haveToCalc = true;
 	}
+
 	Shape::~Shape() {
 		delete[] baseVertices;
 		delete[] drawableVertices;
@@ -33,29 +35,36 @@ namespace Renderer {
 			Vector(width / 2, -height / 2, depth),
 			Vector(-width / 2, -height / 2, depth),
 			Vector(-width / 2, height / 2, depth)
-		}; 
+		};
+
 		for (int i = 0; i < 4; i++) {
 			this->baseVertices[i] = vertices[i];
 			this->drawableVertices[i] = vertices[i];
 		}
+
 		this->center = center;
 	}
+
 	Rectangle::Rectangle(Vector center, Vector vertices[4]) : Shape(4) {
 		for (int i = 0; i < 4; i++) {
 			baseVertices[i] = vertices[i];
 			drawableVertices[i] = vertices[i];
 		}
+
 		this->center = center;
 	}
+
 	RegularPolygon::RegularPolygon(Vector center, int verticesCount, int radius) : Shape(verticesCount) {
 		Vector v;
 		float angle = radians(360 / verticesCount);
+
 		for (int i = 0; i < verticesCount; i++) {
 			v.x = radius * cos(angle * i);
 			v.y = radius * sin(angle * i);
 			baseVertices[i] = v;
 			drawableVertices[i] = v;
 		}
+
 		this->center = center;
 	}
 
@@ -64,9 +73,9 @@ namespace Renderer {
 			this->baseVertices[i] = vertices[i];
 			this->drawableVertices[i] = vertices[i];
 		}
+
 		this->center = center;
 	}
-
 
 	//-------------------------------------------
 	// Position
@@ -75,10 +84,12 @@ namespace Renderer {
 		this->center = newPos;
 		this->haveToCalc = true;
 	}
+
 	void Shape::Move(Vector deltaPos) {
 		this->center += deltaPos;
 		this->haveToCalc = true;
 	}
+
 	//-------------------------------------------
 	// Scaling
 	//-------------------------------------------
@@ -94,34 +105,41 @@ namespace Renderer {
 		this->rotation = rotation;
 		this->haveToCalc = true;
 	}
+
 	void Shape::Rotate(Vector deltaRotation) {
 		this->rotation += deltaRotation;
 		this->haveToCalc = true;
 	}
+
 	void Shape::RotateX(float deltaAngles) {
 		this->rotation.x += deltaAngles;
 		this->haveToCalc = true;
 	}
+
 	void Shape::RotateY(float deltaAngles) {
 		this->rotation.y += deltaAngles;
 		this->haveToCalc = true;
 	}
+
 	void Shape::RotateZ(float deltaAngles) {
 		this->rotation.z += deltaAngles;
 		this->haveToCalc = true;
 	}
+
 	void Shape::RotateDegree(Vector deltaRotation) {
 		this->rotation.x += radians(deltaRotation.x);
 		this->rotation.y += radians(deltaRotation.y);
 		this->rotation.z += radians(deltaRotation.z);
 		this->haveToCalc = true;
 	}
+
 	void Shape::SetRotationDegree(Vector rotation) {
 		this->rotation.x = radians(rotation.x);
 		this->rotation.y = radians(rotation.y);
 		this->rotation.z = radians(rotation.z);
 		this->haveToCalc = true;
 	}
+
 	void Shape::RotateAround(Vector rotation, Vector position) {
 		this->rotation += rotation;
 		for (int i = 0; i < vertexCount; i++)
@@ -142,6 +160,7 @@ namespace Renderer {
 		}
 		renderer->PutLine(drawableVertices[0], drawableVertices[vertexCount - 1]);
 	}
+
 	void Shape::Calculate() {
 		Vector a;
 		Vector b;
@@ -165,7 +184,7 @@ namespace Renderer {
 
 			b = a;
 			a.x = b.x * std::cos(rotation.y) + b.z * std::sin(rotation.y);
-			a.z = - b.x * std::sin(rotation.y) + b.z * std::cos(rotation.y);
+			a.z = -b.x * std::sin(rotation.y) + b.z * std::cos(rotation.y);
 
 			b = a;
 			a.x = b.x * std::cos(rotation.z) - b.y * std::sin(rotation.z);
@@ -180,6 +199,7 @@ namespace Renderer {
 			// Saving
 			drawableVertices[i] = a;
 		}
+
 		haveToCalc = false;
 	}
 }
