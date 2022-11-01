@@ -14,6 +14,7 @@ namespace Renderer {
 	const char fullColors[] = " .,-^;!&%#@";	
 
 	const float PI = 3.14159265f;
+
 	//Convert degrees to radians
 	inline double radians(float degree) {
 		return degree * PI / (float)180;
@@ -69,35 +70,42 @@ namespace Renderer {
 	
 		//Redraw everything. In old versions was a function "Draw".
 		void Redraw();
+
 		//Reset all buffers.
 		void Clear();
+
 		//Print on screen buffers. Used for debugging.
 		void PrintBuffers();
 
 		//While true, brightness of point depend on its position.z.
 		void DepthMode(bool activity);
+
 		/*FOV = filed of view, in degrees
 		Znear will be recalculated*/
 		void SetFieldOfView(float FOV);
+
 		/*Znear is the nearest point you can see,
 		FOV will be recalculated (in degrees)*/
 		void SetZnear(float Znear);
 
 		//Set the data to all buffers and draw it on screen.
-		void PutPoint(Vector p);
+		void PutPoint(const Vector& p);
+
 		//Set the data to all buffers and draw it on screen.
 		inline void PutPoint(int x, int y, int z = 1) {
 			PutPoint(Vector(x, y, z)); 
 		}
 		//Draw line using the PutPoint functions.
 		void PutLine(Vector p1, Vector p2);
+
 		//Draw line using the PutPoint functions.
 		void PutLine(int x0, int y0, int z0, int x1, int y1, int z1) { 
 			PutLine(Vector(x0, y0, z0), Vector(x1, y1, z1)); 
 		}
-		//Put string on the screen
-		void PutStr(int x, int y, std::string str);
 
-		inline Vector PerspectiveProjection3Dto2D(Vector Point3D);
+		//Put string on the screen
+		void PutStr(int x, int y, const std::string& str);
+
+		inline Vector PerspectiveProjection3Dto2D(const Vector& Point3D);
 	};
 }

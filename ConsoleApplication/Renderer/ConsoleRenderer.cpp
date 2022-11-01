@@ -131,7 +131,7 @@ namespace Renderer
 		this->FOV = degrees(std::atan(height / 2 / Znear) * 2);
 	}
 
-	void ConsoleRenderer::PutPoint(Vector p) {
+	void ConsoleRenderer::PutPoint(const Vector& p) {
 		if (p.x < 0 || p.x > width - 1 ||
 			p.y < 0 || p.y > height - 1 ||
 			p.z < Znear || p.z > Zfar)
@@ -211,7 +211,7 @@ namespace Renderer
 		}
 	}
 
-	void ConsoleRenderer::PutStr(int x, int y, std::string str) {
+	void ConsoleRenderer::PutStr(int x, int y, const std::string& str) {
 		if (x < 0 || x > width - 1 ||
 			y < 0 || y > height - 1)
 		{
@@ -225,21 +225,25 @@ namespace Renderer
 		}
 	}
 
-	inline Vector ConsoleRenderer::PerspectiveProjection3Dto2D(Vector point3D) {
-		if (point3D.z < Znear || point3D.z > Zfar) return point3D;
+	inline Vector ConsoleRenderer::PerspectiveProjection3Dto2D(const Vector& point3D) {
+		Vector result = Vector(point3D);
+
+		if (point3D.z < Znear || point3D.z > Zfar) {
+			return result;
+		}
 
 		//Position of the center of the screen;
 		Vector coordCenter = Vector(width / 2, height / 2);
 
 		//Translate origin to the center of the screen;
-		point3D -= coordCenter;
+		result -= coordCenter;
 
-		point3D.x = point3D.x * Znear / point3D.z;
-		point3D.y = point3D.y * Znear / point3D.z;
+		result.x = point3D.x * Znear / point3D.z;
+		result.y = point3D.y * Znear / point3D.z;
 
 		//Translate back
-		point3D += coordCenter;
+		result += coordCenter;
 
-		return point3D;
+		return result;
 	}
 }
