@@ -47,7 +47,7 @@ int Setup() {
 	}
 
 	render->isOrtographic = false;
-	render->SetZnear(70);
+	render->SetZNear(70);
 	center = Vector(width / 2, height / 2, render->Znear + 100);
 
 	obj = new R::Cube(center, 60);

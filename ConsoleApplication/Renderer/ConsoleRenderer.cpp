@@ -9,16 +9,16 @@ namespace Renderer
 		int width,
 		int height,
 		bool depthMode,
-		float Zfar,
-		float Znear
+		float zfar,
+		float zNar
 	) : depthMode(depthMode) {
 		int size = width * height;
 
 		this->height = height;
 		this->width = width;
-		this->Zfar = Zfar;
-		this->Znear = Znear;
-		this->FOV = degrees(std::atan(height / 2 / Znear) * 2);
+		this->zFar = zfar;
+		this->Znear = zNar;
+		this->FOV = degrees(std::atan(height / 2 / zNar) * 2);
 
 		this->isOrtographic = true;
 
@@ -94,37 +94,37 @@ namespace Renderer
 		SetConsoleCursorPosition(handle, coordScreen);
 	}
 
-	void ConsoleRenderer::DepthMode(bool activity) {
+	void ConsoleRenderer::SetDepthMode(bool activity) {
 		depthMode = activity;
 		if (activity) colors = fullColors;
 		else colors = { fullColors[0], fullColors[sizeof(fullColors) - 2] };
 	}
 
-	void ConsoleRenderer::SetFieldOfView(float FOV) {
-		if (FOV < 0) throw 0;
-		this->FOV = FOV;
-		this->Znear = height / std::tan(radians(FOV) / 2) / 2;
+	void ConsoleRenderer::SetFieldOfView(float fov) {
+		if (fov < 0) throw 0;
+		this->FOV = fov;
+		this->Znear = height / std::tan(radians(fov) / 2) / 2;
 	}
 
-	void ConsoleRenderer::SetZnear(float Znear) {
-		if (Znear < 0) throw 0;
-		this->Znear = Znear;
-		this->FOV = degrees(std::atan(height / 2 / Znear) * 2);
+	void ConsoleRenderer::SetZNear(float zNear) {
+		if (zNear < 0) throw 0;
+		this->Znear = zNear;
+		this->FOV = degrees(std::atan(height / 2 / zNear) * 2);
 	}
 
-	void ConsoleRenderer::PutPoint(const Vector& p) {
-		if (p.x < 0 || p.x > width - 1 ||
-			p.y < 0 || p.y > height - 1 ||
-			p.z < Znear || p.z > Zfar)
+	void ConsoleRenderer::PutPoint(const Vector& point) {
+		if (point.x < 0 || point.x > width - 1 ||
+			point.y < 0 || point.y > height - 1 ||
+			point.z < Znear || point.z > zFar)
 		{
 			return;
 		}
 
-		int pos = p.y * width + p.x;
+		int pos = point.y * width + point.x;
 
 		char col = colors[colors.length() - 1];
 
-		float intensivity = (float)(Zfar - p.z) / Zfar * 100;
+		float intensivity = (float)(zFar - point.z) / zFar * 100;
 		float oldIntensivity = depthBuffer[pos];
 
 		//If there is something more near:
@@ -137,57 +137,57 @@ namespace Renderer
 		colorBuffer[pos] = col;
 
 		std::cout.flush();
-		SetConsoleCursorPosition(handle, { (short)p.x, (short)p.y });
+		SetConsoleCursorPosition(handle, { (short)point.x, (short)point.y });
 
 		cout << col;
 	}
 
-	void ConsoleRenderer::PutLine(Vector p1, Vector p2) {
+	void ConsoleRenderer::PutLine(Vector start, Vector end) {
 		if (!isOrtographic) {
-			p1 = PerspectiveProjection3Dto2D(p1);
-			p2 = PerspectiveProjection3Dto2D(p2);
+			start = PerspectiveProjection3Dto2D(start);
+			end = PerspectiveProjection3Dto2D(end);
 		}
 
-		p1.x = (int)p1.x;
-		p1.y = (int)p1.y;
-		p1.z = (int)p1.z;
-		p2.x = (int)p2.x;
-		p2.y = (int)p2.y;
-		p2.z = (int)p2.z;
+		start.x = (int)start.x;
+		start.y = (int)start.y;
+		start.z = (int)start.z;
+		end.x = (int)end.x;
+		end.y = (int)end.y;
+		end.z = (int)end.z;
 
 		register int dx = 1;
-		int a = p2.x - p1.x;
+		int a = end.x - start.x;
 		if (a < 0) dx = -1, a = -a;
 		register int dy = 1;
-		int b = p2.y - p1.y;
+		int b = end.y - start.y;
 		if (b < 0) dy = -1, b = -b;
 		int two_a = 2 * a;
 		int two_b = 2 * b;
 		int xcrit = -b + two_a;
 		register int eps = 0;
 
-		float maxDist = (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y) + 0.1f;
+		float maxDist = (end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y) + 0.1f;
 		int actualDist;
-		int deltaZ = p2.z - p1.z;
+		int deltaZ = end.z - start.z;
 		float progress;
 		int z;
 
 		while (true) {
-			actualDist = (p2.x - p1.x) * (p2.x - p1.x) + (p2.y - p1.y) * (p2.y - p1.y);
+			actualDist = (end.x - start.x) * (end.x - start.x) + (end.y - start.y) * (end.y - start.y);
 			progress = std::sqrt(actualDist / maxDist);
-			z = deltaZ * progress + p1.z;
+			z = deltaZ * progress + start.z;
 
-			PutPoint(p1.x, p1.y, z);
-			if (p1.x == p2.x && p1.y == p2.y) {
+			PutPoint(start.x, start.y, z);
+			if (start.x == end.x && start.y == end.y) {
 				break;
 			}
 
 			if (eps <= xcrit) {
-				p1.x += dx, eps += two_b;
+				start.x += dx, eps += two_b;
 			}
 
 			if (eps >= a || a < b) {
-				p1.y += dy, eps -= two_a;
+				start.y += dy, eps -= two_a;
 			}
 		}
 	}
@@ -204,10 +204,10 @@ namespace Renderer
 		cout << str;
 	}
 
-	inline Vector ConsoleRenderer::PerspectiveProjection3Dto2D(const Vector& point3D) {
-		Vector result = Vector(point3D);
+	inline Vector ConsoleRenderer::PerspectiveProjection3Dto2D(const Vector& point3d) {
+		Vector result = Vector(point3d);
 
-		if (point3D.z < Znear || point3D.z > Zfar) {
+		if (point3d.z < Znear || point3d.z > zFar) {
 			return result;
 		}
 
@@ -217,8 +217,8 @@ namespace Renderer
 		//Translate origin to the center of the screen;
 		result -= coordCenter;
 
-		result.x = point3D.x * Znear / point3D.z;
-		result.y = point3D.y * Znear / point3D.z;
+		result.x = point3d.x * Znear / point3d.z;
+		result.y = point3d.y * Znear / point3d.z;
 
 		//Translate back
 		result += coordCenter;
